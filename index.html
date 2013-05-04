@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html ng-app="smartTrader">
+<head>
+    <title>SmartTrader</title>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css"
+          rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+    <link href="css/tablecloth.css" rel="stylesheet">
+    <link href="css/smartTrader.css" rel="stylesheet">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="#">SmartTrader</a>
+
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li ng-controller="hubsCtr">
+                        <select id="hubs" ng-model="hub" ng-options="hub.name for hub in hubs" ng-change="refresh()">
+                        </select>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-controller="tradesCtr">
+    <h3 id="penury-trades-header" class="pointer">Penury Trades ({{penuryTrades.trades.length || 0}} trades) {{penuryTrades.time || 0}} ms</h3>
+
+    <div class="progress progress-striped active" ng-show="!penuryTrades.trades">
+        <div class="bar" style="width: 100%;"></div>
+    </div>
+    <table id="penury-trades-table" class="table table-hover" ng-show="penuryTrades.trades">
+        <thead>
+        <tr>
+            <th>TYPE</th>
+            <th>NOM</th>
+            <th>LINKS</th>
+            <th>ID</th>
+            <th>DATE VENTE</th>
+            <th>STATION</th>
+            <th class="sortButton pointer">VOLUME</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="penuryTrade in penuryTrades.trades" ng-class="getClass(penuryTrade)">
+            <td><span class="badge badge-success">{{penuryTrade.groupName}}</span></td>
+            <td><input type="text" value="{{penuryTrade.name}}"/></td>
+            <td>
+                <a href="http://eve-central.com/home/quicklook.html?typeid={{penuryTrade.typeID}}"
+                   target="_blank">EC</a>&nbsp;/&nbsp;<a
+                    href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{penuryTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
+                    target="_blank">MD</a>
+            </td>
+            <td><span class="badge badge-important">{{penuryTrade.typeID}}</span></td>
+            <td><span class="badge badge-info">{{penuryTrade.sellerHoursOld}} heures</span></td>
+            <td><span class="badge badge-success">{{penuryTrade.station}}</span></td>
+            <td><span class="badge badge-important">${penuryTrade.item.volume} m3</span></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3 id="station-trades-header" class="pointer">Station Trades ({{stationTrades.trades.length || 0}} trades) {{stationTrades.time || 0}} ms</h3>
+
+    <div class="progress progress-striped active" ng-show="!stationTrades.trades">
+        <div class="bar" style="width: 100%;"></div>
+    </div>
+    <table id="station-trades-table" class="table table-hover" ng-show="stationTrades.trades">
+        <thead>
+        <tr>
+            <th>PROFIT (UNITE)</th>
+            <th>PRIX ACHAT</th>
+            <th>PROFIT (%)</th>
+            <th>TYPE</th>
+            <th>NOM</th>
+            <th>LINKS</th>
+            <th>ID</th>
+            <th>DATE VENTE</th>
+            <th>STATION</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="stationTrade in stationTrades.trades" ng-class="getClass(stationTrade)">
+            <td><span class="badge badge-success">{{stationTrade.profit | number}} ISK</span></td>
+            <td><span class="badge badge-important">{{stationTrade.buyPrice | number}} ISK</span></td>
+            <td><span class="badge badge-info">{{stationTrade.percentProfit}} %</span></td>
+            <td><span class="badge badge-success">{{stationTrade.groupName}}</span></td>
+            <td><input type="text" value="{{stationTrade.name}}"/></td>
+            <td>
+                <a href="http://eve-central.com/home/quicklook.html?typeid={{stationTrade.typeID}}"
+                   target="_blank">EC</a>&nbsp;/&nbsp;<a
+                    href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{stationTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
+                    target="_blank">MD</a>
+            </td>
+            <td><span class="badge badge-important">{{stationTrade.typeID}}</span></td>
+            <td><span class="badge badge-info">{{stationTrade.sellerHoursOld}} heures</span></td>
+            <td><span class="badge badge-success">{{stationTrade.station}}</span></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3 id="hub-trades-header" class="pointer">Hub Trades ({{hubTrades.trades.length || 0}} trades) {{hubTrades.time || 0}} ms</h3>
+
+    <div class="progress progress-striped active" ng-show="!hubTrades.trades">
+        <div class="bar" style="width: 100%;"></div>
+    </div>
+    <table id="hub-trades-table" class="table table-hover" ng-show="hubTrades.trades">
+        <thead>
+        <tr>
+            <th>PROFIT (TOTAL)</th>
+            <th>PROFIT (UNITE)</th>
+            <th>PROFIT (%)</th>
+            <th>TYPE</th>
+            <th>NOM</th>
+            <th>LINKS</th>
+            <th>PRIX VENTE</th>
+            <th>ID</th>
+            <th>DATE ACHAT</th>
+            <th>STATION</th>
+            <th>DATE VENTE</th>
+            <th>QUANTITE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="hubTrade in hubTrades.trades" ng-class="getClass(hubTrade)">
+            <td><span class="badge badge-success">{{hubTrade.totalProfit | number}} ISK</span></td>
+            <td><span class="badge badge-important">{{hubTrade.profit | number}} ISK</span></td>
+            <td><span class="badge badge-info">{{hubTrade.percentProfit}} %</span></td>
+            <td><span class="badge badge-success">{{hubTrade.groupName}}</span></td>
+            <td><input type="text" value="{{hubTrade.name}}"/></td>
+            <td>
+                <a href="http://eve-central.com/home/quicklook.html?typeid={{hubTrade.typeID}}"
+                   target="_blank">EC</a>&nbsp;/&nbsp;<a
+                    href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{hubTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
+                    target="_blank">MD</a>
+            </td>
+            <td><span class="badge badge-important">{{hubTrade.profit + hubTrade.averagePrice | number}} ISK</span></td>
+            <td><span class="badge badge-info">{{hubTrade.typeID}}</span></td>
+            <td><span class="badge badge-success">{{hubTrade.buyerHoursOld}} heures</span></td>
+            <td><span class="badge badge-important">{{hubTrade.station}}</span></td>
+            <td><span class="badge badge-info">{{hubTrade.sellerHoursOld}} heures</span></td>
+            <td><span class="badge badge-success">{{hubTrade.totalQuantity}} ({{hubTrade.totalVolume}}m3)</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+<script src="js/smartTrader.js"></script>
+<script src="js/services.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+<script src="js/jquery.tablesorter.min.js"></script>
+<script src="js/jquery.metadata.js"></script>
+<script src="js/jquery.tablecloth.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>
