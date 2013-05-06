@@ -13,8 +13,16 @@
                         <a class="brand" href="#">SmartTrader</a>
                         <div class="nav-collapse collapse">
                             <ul class="nav">
+                                <li><a href="javascript:void(0)">Hub Vente</a></li>
                                 <li ng-controller="hubsCtr">
-                                    <select id="hubs" ng-model="hub" ng-options="hub.name for hub in hubs" ng-change="refresh()">
+                                    <select ng-model="hub" ng-options="hub.name for hub in hubs" ng-change="refresh()">
+                                    </select>
+                                </li>
+                                <li><a href="javascript:void(0)">Hub Achat</a></li>
+                                <li ng-controller="hubsCtr">
+                                    <select id="hub-buyer">
+                                        <option value="all">Tous</option>
+                                        <option ng-repeat="hub in hubs" value="{{hub.name}}">{{hub.name}}</option>
                                     </select>
                                 </li>
                             </ul>
@@ -56,6 +64,49 @@
                         </tr>
                     </tbody>
                 </table>
+                <h3 id="hub-trades-header" class="pointer">Hub Trades ({{hubTrades.trades.length || 0}} trades) {{hubTrades.time || 0}} ms</h3>
+                <div class="progress progress-striped active" ng-show="!hubTrades.trades">
+                    <div class="bar" style="width: 100%;"></div>
+                </div>
+                <table id="hub-trades-table" class="table table-hover" ng-show="hubTrades.trades">
+                    <thead>
+                        <tr>
+                            <th>PROFIT (TOTAL)</th>
+                            <th>PROFIT (UNITE)</th>
+                            <th>PROFIT (%)</th>
+                            <th>TYPE</th>
+                            <th>NOM</th>
+                            <th>LINKS</th>
+                            <th>PRIX VENTE</th>
+                            <th>ID</th>
+                            <th>DATE ACHAT</th>
+                            <th>STATION</th>
+                            <th>DATE VENTE</th>
+                            <th>QUANTITE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="hubTrade in hubTrades.trades" ng-class="getClass(hubTrade)" data-hub="{{hubTrade.station}}">
+                            <td><span class="badge badge-success">{{hubTrade.totalProfit | number}} ISK</span></td>
+                            <td><span class="badge badge-important">{{hubTrade.profit | number}} ISK</span></td>
+                            <td><span class="badge badge-info">{{hubTrade.percentProfit}} %</span></td>
+                            <td><span class="badge badge-success">{{hubTrade.groupName}}</span></td>
+                            <td><input type="text" value="{{hubTrade.name}}"/></td>
+                            <td>
+                                <a href="http://eve-central.com/home/quicklook.html?typeid={{hubTrade.typeID}}"
+                                target="_blank">EC</a>&nbsp;/&nbsp;<a
+                                href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{hubTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
+                                target="_blank">MD</a>
+                            </td>
+                            <td><span class="badge badge-important">{{hubTrade.profit + hubTrade.averagePrice | number}} ISK</span></td>
+                            <td><span class="badge badge-info">{{hubTrade.typeID}}</span></td>
+                            <td><span class="badge badge-success">{{hubTrade.buyerHoursOld}} heures</span></td>
+                            <td><span class="badge badge-important">{{hubTrade.station}}</span></td>
+                            <td><span class="badge badge-info">{{hubTrade.sellerHoursOld}} heures</span></td>
+                            <td><span class="badge badge-success">{{hubTrade.totalQuantity}} ({{hubTrade.totalVolume}}m3)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
                 <h3 id="station-trades-header" class="pointer">Station Trades ({{stationTrades.trades.length || 0}} trades) {{stationTrades.time || 0}} ms</h3>
                 <div class="progress progress-striped active" ng-show="!stationTrades.trades">
                     <div class="bar" style="width: 100%;"></div>
@@ -90,49 +141,6 @@
                             <td><span class="badge badge-important">{{stationTrade.typeID}}</span></td>
                             <td><span class="badge badge-info">{{stationTrade.sellerHoursOld}} heures</span></td>
                             <td><span class="badge badge-success">{{stationTrade.station}}</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <h3 id="hub-trades-header" class="pointer">Hub Trades ({{hubTrades.trades.length || 0}} trades) {{hubTrades.time || 0}} ms</h3>
-                <div class="progress progress-striped active" ng-show="!hubTrades.trades">
-                    <div class="bar" style="width: 100%;"></div>
-                </div>
-                <table id="hub-trades-table" class="table table-hover" ng-show="hubTrades.trades">
-                    <thead>
-                        <tr>
-                            <th>PROFIT (TOTAL)</th>
-                            <th>PROFIT (UNITE)</th>
-                            <th>PROFIT (%)</th>
-                            <th>TYPE</th>
-                            <th>NOM</th>
-                            <th>LINKS</th>
-                            <th>PRIX VENTE</th>
-                            <th>ID</th>
-                            <th>DATE ACHAT</th>
-                            <th>STATION</th>
-                            <th>DATE VENTE</th>
-                            <th>QUANTITE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="hubTrade in hubTrades.trades" ng-class="getClass(hubTrade)">
-                            <td><span class="badge badge-success">{{hubTrade.totalProfit | number}} ISK</span></td>
-                            <td><span class="badge badge-important">{{hubTrade.profit | number}} ISK</span></td>
-                            <td><span class="badge badge-info">{{hubTrade.percentProfit}} %</span></td>
-                            <td><span class="badge badge-success">{{hubTrade.groupName}}</span></td>
-                            <td><input type="text" value="{{hubTrade.name}}"/></td>
-                            <td>
-                                <a href="http://eve-central.com/home/quicklook.html?typeid={{hubTrade.typeID}}"
-                                target="_blank">EC</a>&nbsp;/&nbsp;<a
-                                href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{hubTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
-                                target="_blank">MD</a>
-                            </td>
-                            <td><span class="badge badge-important">{{hubTrade.profit + hubTrade.averagePrice | number}} ISK</span></td>
-                            <td><span class="badge badge-info">{{hubTrade.typeID}}</span></td>
-                            <td><span class="badge badge-success">{{hubTrade.buyerHoursOld}} heures</span></td>
-                            <td><span class="badge badge-important">{{hubTrade.station}}</span></td>
-                            <td><span class="badge badge-info">{{hubTrade.sellerHoursOld}} heures</span></td>
-                            <td><span class="badge badge-success">{{hubTrade.totalQuantity}} ({{hubTrade.totalVolume}}m3)</span></td>
                         </tr>
                     </tbody>
                 </table>

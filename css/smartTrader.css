@@ -11,12 +11,21 @@ h3:hover {
 	background-color: #f5f5f5;
 }
 
-#hubs {
+ul.nav > li > select {
 	margin: 5px 0;
 }
 
 .pointer {
 	cursor: pointer;
+}
+
+.container {
+	width: 100%;
+}
+
+.progress {
+	margin: auto;
+	width: 80%;
 }
 
 .table th, .table td {

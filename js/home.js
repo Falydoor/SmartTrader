@@ -12,4 +12,12 @@ $(document).ready(function() {
 		$('#hub-trades-table').toggle();
 	});
 
+	$('#hub-buyer').change(function(){
+		$('#hub-trades-table').children('tbody').children('tr').each(function(){
+			var tr = $(this),
+				hub = $('#hub-buyer').val();
+			tr.toggle(hub === 'all' || tr.data('hub') === hub);
+		});
+	});
+
 });
