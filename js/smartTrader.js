@@ -7,6 +7,7 @@ function hubsCtr($scope, Hub) {
     $scope.hubs = Hub;
     $scope.hub = Hub[5];
     $scope.refresh = function() {
+        $('#hub-buyer').val('all');
         $scope.$emit('hubChanged', $scope.hub);
     };
 }

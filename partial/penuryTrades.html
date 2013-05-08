@@ -1,0 +1,33 @@
+<h3 id="penury-trades-header" class="pointer">Penury Trades ({{penuryTrades.trades.length || 0}} trades) {{penuryTrades.time || 0}} ms</h3>
+<div class="progress progress-striped active" ng-show="!penuryTrades.trades">
+    <div class="bar" style="width: 100%;"></div>
+</div>
+<table id="penury-trades-table" class="table table-hover" ng-show="penuryTrades.trades">
+    <thead>
+        <tr>
+            <th>TYPE</th>
+            <th>NOM</th>
+            <th>LINKS</th>
+            <th>ID</th>
+            <th>DATE VENTE</th>
+            <th>STATION</th>
+            <th class="sortButton pointer">VOLUME</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="penuryTrade in penuryTrades.trades" ng-class="getClass(penuryTrade)">
+            <td><span class="badge badge-success">{{penuryTrade.groupName}}</span></td>
+            <td><input type="text" value="{{penuryTrade.name}}"/></td>
+            <td>
+                <a href="http://eve-central.com/home/quicklook.html?typeid={{penuryTrade.typeID}}"
+                target="_blank">EC</a>&nbsp;/&nbsp;<a
+                href="http://eve-marketdata.com/price_check.php?step=Show&type_id={{penuryTrade.typeID}}&region_id={{hub.station.region.id}}&type=history"
+                target="_blank">MD</a>
+            </td>
+            <td><span class="badge badge-important">{{penuryTrade.typeID}}</span></td>
+            <td><span class="badge badge-info">{{penuryTrade.sellerHoursOld}} heures</span></td>
+            <td><span class="badge badge-success">{{penuryTrade.station}}</span></td>
+            <td><span class="badge badge-important">${penuryTrade.item.volume} m3</span></td>
+        </tr>
+    </tbody>
+</table>

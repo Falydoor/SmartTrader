@@ -1,5 +1,4 @@
 var url = 'http://192.168.1.2\\:8080/SmartTraderREST/';
-
 angular.module('smartTraderServices', ['ngResource']).
 factory('HubTrades', function($resource) {
     return $resource(url + 'hubtrades/:station', {
